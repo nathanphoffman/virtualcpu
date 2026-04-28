@@ -4,7 +4,7 @@ public class PMOSTransistor : NMOSTransistor
     {
         if (Gate == null) throw new Exception("Gate must be set on a transistor");
 
-        bool drainVoltage = (!Gate.DrainVoltage) && voltage;
+        bool drainVoltage = !Gate.DrainVoltage ? voltage : false;
 
         if (drainVoltage != this.DrainVoltage)
             this.sendVoltageToDrain(drainVoltage);
