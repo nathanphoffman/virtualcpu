@@ -1,5 +1,19 @@
 public abstract class WireBase
 {
+    // cross-type chaining fallback (e.g. StraightWire > Transistor)
+    public static WireBase operator >(WireBase source, WireBase drain)
+    {
+        source.ParallelConnectionsNextInSerial = [drain];
+        return drain;
+    }
+
+    public static WireBase operator <(WireBase drain, WireBase source)
+    {
+        source.ParallelConnectionsNextInSerial = [drain];
+        return source;
+    }
+
+
     public bool SourceVoltage = false;
     public bool DrainVoltage = false;
     public WireBase[] ParallelConnectionsNextInSerial = [];
