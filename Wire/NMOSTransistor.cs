@@ -6,7 +6,7 @@ public class NMOSTransistor : Wire<NMOSTransistor>
     {
         if (Gate == null) throw new Exception("Gate must be set on a transistor");
 
-        bool drainVoltage = Gate.DrainVoltage;
+        bool drainVoltage = Gate.DrainVoltage && source.DrainVoltage;
 
         if (drainVoltage != this.DrainVoltage)
         {

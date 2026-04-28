@@ -1,17 +1,40 @@
-﻿static void TestNAND(bool a, bool b)
+static WireBase BuildPMOSPath(WireBase input1, WireBase input2)
 {
-    var inputA = new StraightWire();
-    var inputB = new StraightWire();
-
-    inputA.SetVoltage(a);
-    inputB.SetVoltage(b);
-
-    var output = Gate.BuildNAND(inputA, inputB);
-
-    Console.WriteLine($"NAND({(a ? 1 : 0)}, {(b ? 1 : 0)}) = {(output.DrainVoltage ? 1 : 0)}");
+    var power = new StraightWire();
+    var pmos1 = new PMOSTransistor() << input1;
+    var pmos2 = new PMOSTransistor() << input2;
+    var output = new StraightWire();
+    _ = power > (pmos1 + pmos2) > output;
+    power.SetVoltage(true);
+    return output;
 }
 
-TestNAND(false, false);  // expect 1
-TestNAND(false, true);   // expect 1
-TestNAND(true, false);  // expect 1
-TestNAND(true, true);   // expect 0
+static WireBase BuildNMOSPath(WireBase input1, WireBase input2)
+{
+    var power = new StraightWire();
+    var nmos1 = new NMOSTransistor() << input1;
+    var nmos2 = new NMOSTransistor() << input2;
+    _ = power > nmos1 > nmos2;
+    power.SetVoltage(true);
+    return nmos2;
+}
+
+static void TestPath(string name, Func<WireBase, WireBase, WireBase> build, int[] expected)
+{
+    bool[][] inputs = [[false,false],[false,true],[true,false],[true,true]];
+    Console.WriteLine($"--- {name} ---");
+    for (int i = 0; i < 4; i++)
+    {
+        var a = new StraightWire();
+        var b = new StraightWire();
+        a.SetVoltage(inputs[i][0]);
+        b.SetVoltage(inputs[i][1]);
+        var output = build(a, b);
+        int result = output.DrainVoltage ? 1 : 0;
+        string pass = result == expected[i] ? "✓" : "✗";
+        Console.WriteLine($"  ({(inputs[i][0]?1:0)},{(inputs[i][1]?1:0)}) = {result}  expected {expected[i]} {pass}");
+    }
+}
+
+TestPath("PMOS path", BuildPMOSPath, [1, 1, 1, 0]);
+TestPath("NMOS path", BuildNMOSPath, [0, 0, 0, 1]);
