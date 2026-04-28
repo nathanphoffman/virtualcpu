@@ -18,7 +18,7 @@ public static class Gate
         var nmos1 = new NMOSTransistor() << input1;
         var nmos2 = new NMOSTransistor() << input2;
 
-        var nmosPath = power > nmos1;
+        var nmosPath = power > nmos1 > nmos2;
 
         power.SetVoltage(true);
  
