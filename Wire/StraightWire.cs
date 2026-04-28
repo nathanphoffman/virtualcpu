@@ -1,8 +1,8 @@
 public class StraightWire : Wire<StraightWire>
 {
-    public override void VoltageChange(WireBase source, bool voltage)
+    public override void VoltageChange(WireBase source)
     {
-        if (voltage != this.DrainVoltage)
-            this.sendVoltageToDrain(voltage);
+        if (source.DrainVoltage != this.DrainVoltage)
+            this.sendVoltageToDrain(source.DrainVoltage);
     }
 }

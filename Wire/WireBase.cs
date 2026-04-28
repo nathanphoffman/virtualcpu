@@ -18,7 +18,7 @@ public abstract class WireBase
     public bool DrainVoltage = false;
     public WireBase[] ParallelConnectionsNextInSerial = [];
 
-    public abstract void VoltageChange(WireBase source, bool voltage);
+    public abstract void VoltageChange(WireBase source);
 
     public void SetVoltage(bool voltage)
     {
@@ -30,6 +30,6 @@ public abstract class WireBase
     {
         DrainVoltage = voltage;
         foreach (var wire in ParallelConnectionsNextInSerial)
-            wire.VoltageChange(this, voltage);
+            wire.VoltageChange(this);
     }
 }

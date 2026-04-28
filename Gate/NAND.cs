@@ -22,6 +22,6 @@ public static class Gate
 
         power.SetVoltage(true);
  
-        return pmosPath;
+        return nmosPath;
     }
 }

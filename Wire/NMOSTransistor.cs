@@ -2,14 +2,17 @@ public class NMOSTransistor : Wire<NMOSTransistor>
 {
     public WireBase? Gate;
 
-    public override void VoltageChange(WireBase source, bool voltage)
+    public override void VoltageChange(WireBase source)
     {
         if (Gate == null) throw new Exception("Gate must be set on a transistor");
 
-        bool drainVoltage = Gate.DrainVoltage && voltage;
+        bool drainVoltage = Gate.DrainVoltage;
 
         if (drainVoltage != this.DrainVoltage)
-            this.sendVoltageToDrain(drainVoltage);
+        {
+            DrainVoltage = drainVoltage;
+            GatesHaveChanged();
+        }
     }
 
     // gate: transistor << gateWire — gateWire controls transistor
@@ -28,5 +31,11 @@ public class NMOSTransistor : Wire<NMOSTransistor>
     public static NMOSTransistor operator >>(NMOSTransistor transistor, int _)
     {
         throw new NotImplementedException(">> is not supported, use <<");
+    }
+
+    public void GatesHaveChanged()
+    {
+        foreach (var wire in ParallelConnectionsNextInSerial)
+            wire.VoltageChange(this);
     }
 }
