@@ -11,12 +11,14 @@ public static class Gate
         var pmos1 = new PMOSTransistor() << input1;
         var pmos2 = new PMOSTransistor() << input2;
 
-        var pmosPath = power > pmos1;
+        var pmosSerial = power > (pmos1 + pmos2);
+
+        var pmosPath = pmosSerial > new StraightWire();
 
         var nmos1 = new NMOSTransistor() << input1;
         var nmos2 = new NMOSTransistor() << input2;
 
-        var nmosPath = power > nmos1 > nmos2;
+        var nmosPath = power > nmos1;
 
         power.SetVoltage(true);
  

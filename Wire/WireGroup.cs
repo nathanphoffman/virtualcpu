@@ -12,4 +12,19 @@ public class WireGroup
     {
         return new WireGroup(group.Wires.Append(wire).ToArray());
     }
+
+    public static WireBase operator >(WireGroup sources, WireBase drain)
+    {
+        foreach (var wire in sources.Wires)
+            wire.ParallelConnectionsNextInSerial = [.. wire.ParallelConnectionsNextInSerial, drain];
+        return drain;
+    }
+
+    public static WireBase operator <(WireGroup sources, WireBase drain)
+    {
+        foreach (var wire in sources.Wires)
+            wire.ParallelConnectionsNextInSerial = [.. wire.ParallelConnectionsNextInSerial, drain];
+        return drain;
+    }
+
 }
