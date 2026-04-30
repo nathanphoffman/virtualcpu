@@ -15,7 +15,8 @@ public abstract class WireBase
 
 
     public bool SourceVoltage = false;
-    public bool DrainVoltage = false;
+    // null = high-impedance (not actively driven), true/false = actively driven
+    public bool? DrainVoltage = null;
     public WireBase[] ParallelConnectionsNextInSerial = [];
 
     public abstract void VoltageChange(WireBase source);
@@ -26,7 +27,7 @@ public abstract class WireBase
         sendVoltageToDrain(voltage);
     }
 
-    protected void sendVoltageToDrain(bool voltage)
+    protected void sendVoltageToDrain(bool? voltage)
     {
         DrainVoltage = voltage;
         foreach (var wire in ParallelConnectionsNextInSerial)

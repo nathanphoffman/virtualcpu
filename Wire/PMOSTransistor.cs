@@ -4,7 +4,10 @@ public class PMOSTransistor : NMOSTransistor
     {
         if (Gate == null) throw new Exception("Gate must be set on a transistor");
 
-        bool drainVoltage = !Gate.DrainVoltage ? source.DrainVoltage : false;
+        if (source != Gate) SourceTerminal = source;
+
+        // Conducts when gate is explicitly LOW; null (high-impedance) when gate is HIGH or undriven.
+        bool? drainVoltage = Gate.DrainVoltage == false ? SourceTerminal?.DrainVoltage : null;
 
         if (drainVoltage != this.DrainVoltage)
         {

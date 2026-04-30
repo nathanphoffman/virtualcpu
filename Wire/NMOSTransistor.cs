@@ -1,12 +1,19 @@
 public class NMOSTransistor : Wire<NMOSTransistor>
 {
     public WireBase? Gate;
+    public WireBase? SourceTerminal;
 
     public override void VoltageChange(WireBase source)
     {
         if (Gate == null) throw new Exception("Gate must be set on a transistor");
 
-        bool drainVoltage = Gate.DrainVoltage && source.DrainVoltage;
+        // If the caller is not the gate, it's the source terminal (ground or upstream transistor).
+        // This lets us distinguish "gate fired" from "source voltage changed" without extra wiring.
+        if (source != Gate) SourceTerminal = source;
+
+        // Conducting: pass source terminal voltage through (null if source isn't actively driven).
+        // Not conducting: null (high-impedance — stop driving, don't actively pull anything).
+        bool? drainVoltage = Gate.DrainVoltage == true ? SourceTerminal?.DrainVoltage : null;
 
         if (drainVoltage != this.DrainVoltage)
         {
@@ -19,11 +26,7 @@ public class NMOSTransistor : Wire<NMOSTransistor>
     public static NMOSTransistor operator <<(NMOSTransistor transistor, WireBase gate)
     {
         transistor.Gate = gate;
-
-        // this is needed as the gate technically feeds the transistor, 
-        //  so voltages coming in on that line need track downstream lines
         gate.ParallelConnectionsNextInSerial = gate.ParallelConnectionsNextInSerial.Append(transistor).ToArray();
-
         return transistor;
     }
 

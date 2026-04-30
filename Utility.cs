@@ -7,7 +7,7 @@ public static class Utility
 
     public static string GetBinaryOutput(WireBase[] wires)
     {
-        List<byte> bytes = wires.ToList().Select((wire) => Convert.ToByte(wire.DrainVoltage)).ToList();
+        List<byte> bytes = wires.ToList().Select((wire) => Convert.ToByte(wire.DrainVoltage == true)).ToList();
         return ToBinaryString(bytes);
     }
 }
